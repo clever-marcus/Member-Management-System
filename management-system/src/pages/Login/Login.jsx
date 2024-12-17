@@ -4,44 +4,54 @@ import { PersonFill } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom'
 
 const Login = () => {
-
+  // State to manage form data (email and password)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
+  // Function to handle changes in form inputs
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target; // Destructure name and value from the input event
     setFormData({
-      ...formData,
-      [name]: value,
+      ...formData, // Preserve existing form data
+      [name]: value, // Update the specific field
     });
   };
 
+  // Function to handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent the default form submission behavior
     
     try {
+      // Send a POST request to the login endpoint
       const response = await fetch('http://localhost:8080/user/login', {
-        method: 'POST',
+        method: 'POST', // HTTP method
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json', // Specific JSON content type
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData), // Convert form data to JSON
       });
 
+      // Parse the response as JSON
       const result = await response.json();
       if (response.ok) {
+        // If the resonse is successful, log the result and vavigate to the employee page
         console.log('Login successful:', result);
         navigate('/employee');
+
+        // Store the user data and token in localStorage
         const user = JSON.stringify(result.user);
         localStorage.setItem("user", user);
         localStorage.setItem("token", result.token)
+
       } else {
+        // If login fails, log the error message and display an alert
         console.error('Login failed!', result.message);
         alert(result.message);
       }
     } catch (error) {
+      // Handle network or other unexpected errors
       console.error('Request error:', error.message);
       alert('An error occurred. Please try again later.')
     }

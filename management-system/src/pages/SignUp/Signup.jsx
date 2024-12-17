@@ -12,32 +12,34 @@ const Signup = () => {
     password: '',
   });
 
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
-      ...formData,
-      [name]: value,
+      ...formData, // Preserve exisiting state values
+      [name]: value, // Update the specific field
     });
   };
-
+  // Handles form submission for user registration
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission behavior
     console.log("Submiting formData:", formData)
     try {
       const response = await fetch('http://localhost:8080/user/register', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json', // Inform form data to JSON
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData), // Convert form data to JSON
       });
 
+      // Check if the response indicates an error
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Error Response:", errorData);
         throw new Error(errorData.message || "Failed to register");
       }
-
+      // If registration is successful, navigate to the login page
       const result = await response.json();
       if (result.user._id) {
         navigate('/login');
@@ -45,9 +47,15 @@ const Signup = () => {
         console.error('Signup failed!');
       }
     } catch (error) {
-      console.error(error.message);
+      console.error(error.message); // Log any errors encountered
     }
   };
+
+  /*
+    When the handleSubmit function is triggered, the form data is sent to the backend
+    API using a POST request.
+    The backend server processes the request and stores the user information in a MongoDB database
+  */
 
   return (
     <Container className="mt-5" style={{ maxWidth: '400px' }}>
